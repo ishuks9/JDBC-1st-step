@@ -1,0 +1,165 @@
+package com.capgemini.jdbc;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Properties;
+import java.util.Scanner;
+
+public class JdbcStepTwo 
+{
+
+	public static void main(String[] args) 
+	{
+		{
+			Scanner sc=new Scanner(System.in);
+			
+			System.out.println("Enter the jar class ");
+			
+			String classname= sc.next();
+			
+			System.out.println("Enter Username");
+			
+			String user= sc.next();
+			
+			System.out.println("Enter password");
+			
+			String pass= sc.next();
+			
+			
+			
+			Connection con=null;
+			Statement stmt=null;
+			ResultSet rs= null;
+			
+			try
+			{
+				//1.step 1 class for name method
+				
+				java.sql.Driver driver;
+				
+				try {
+					driver = (java.sql.Driver)Class.forName(classname).newInstance();
+					DriverManager.registerDriver(driver);
+				} 
+				catch (InstantiationException e)
+				{
+					
+					e.printStackTrace();
+				} 
+				catch (IllegalAccessException e) 
+				{
+			
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) 
+				{
+				
+					e.printStackTrace();
+				}
+				
+				
+				//establish connection
+				
+		    FileReader fr = null;
+			try 
+			{
+				fr = new FileReader("C:/Users/user/Desktop/Capgemini Training/d.c.properties");
+			} 
+			catch (FileNotFoundException e) 
+			{
+				
+				e.printStackTrace();
+			}
+				 
+
+				Properties prop= new Properties();
+				
+				try
+				{
+					prop.load(fr);
+				} 
+				catch (IOException e) 
+				
+				
+				{
+					
+					e.printStackTrace();
+				}
+				
+				        String dbur1="jdbc:mysql://localhost:3306/Avengers?";
+				        
+						con=DriverManager.getConnection(dbur1,prop);
+						
+						//3. Issue the sql query via conn
+						
+						String query="select * from marvelavengers";
+						stmt= con.createStatement();
+						rs=stmt.executeQuery(query);
+						
+						//4. process the resultant data
+						
+						while(rs.next())
+							
+						{
+							int id= rs.getInt("a_id");
+							String name= rs.getString("a_name");
+							String power=rs.getString("a_power");
+							String planet=rs.getString("a_planet");
+							
+							System.out.println("********************");
+							
+							System.out.println("id= " +id);
+							System.out.println("name= "+name);
+							System.out.println("power= "+power);
+							System.out.println("planet= "+planet);
+							
+							System.out.println("***********************");
+							
+						}	
+						}
+			
+			catch (SQLException e)
+			{
+			  e.printStackTrace();				
+			}
+			
+			finally
+			{
+				try
+				{
+					stmt.close();
+				}
+				catch(SQLException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					con.close();
+				}
+				catch(SQLException e)
+				{
+					e.printStackTrace();
+				}
+				try
+				{
+					rs.close();
+				}
+				catch(SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+				
+	}
+}
+	
+		
+
+	
